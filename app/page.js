@@ -16,7 +16,6 @@ export default function Home() {
   const graph = useMdpGraph()
   const [selectedNodeId, setSelectedNodeId] = useState(null)
   const [selectedEdgeId, setSelectedEdgeId] = useState(null)
-  const [chatOpen, setChatOpen] = useState(false)
   const [fitViewTrigger, setFitViewTrigger] = useState(0)
 
   const selectedNode = graph.nodes.find(n => n.id === selectedNodeId) ?? null
@@ -174,24 +173,11 @@ export default function Home() {
         result={graph.validationResult}
       />
 
-      {/* Chat panel */}
+      {/* Chat panel — bottom-centre dock, self-manages open/close */}
       <ChatPanel
-        open={chatOpen}
-        onClose={() => setChatOpen(false)}
         graph={{ nodes: graph.nodes, edges: graph.edges }}
         onOperations={handleChatOperations}
       />
-
-      {/* Chat FAB */}
-      {!chatOpen && (
-        <button
-          onClick={() => setChatOpen(true)}
-          className="fixed bottom-6 right-6 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center text-lg transition-colors z-30"
-          title="Open AI Chat"
-        >
-          💬
-        </button>
-      )}
     </div>
   )
 }
