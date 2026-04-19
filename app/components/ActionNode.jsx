@@ -28,8 +28,8 @@ export default function ActionNode({ data, selected }) {
       )}
 
       {hasValue && (
-        <span className={`text-[11px] font-bold mt-0.5 ${data.isOptimal ? 'text-green-600' : 'text-slate-500'}`}>
-          Q={data.computedValue.toFixed(2)}
+        <span className={`text-[11px] font-bold mt-0.5 whitespace-nowrap px-1 ${data.isOptimal ? 'text-green-600' : 'text-slate-500'}`}>
+          Q = {data.computedValue.toFixed(2)}
         </span>
       )}
 

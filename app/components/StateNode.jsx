@@ -15,7 +15,7 @@ export default function StateNode({ data, selected }) {
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center w-28 h-28 rounded-full shadow-md ${bgClass} ${ringClass} cursor-pointer select-none`}
+      className={`relative flex flex-col items-center justify-center w-32 h-32 rounded-full shadow-md ${bgClass} ${ringClass} cursor-pointer select-none`}
     >
       <Handle type="target" position={Position.Top} className="w-2! h-2! bg-slate-400!" />
 
@@ -28,8 +28,8 @@ export default function StateNode({ data, selected }) {
       )}
 
       {hasValue && (
-        <span className="text-[11px] font-bold text-blue-600 mt-1">
-          V={data.computedValue.toFixed(2)}
+        <span className="text-[11px] font-bold text-blue-600 mt-1 whitespace-nowrap px-1">
+          V = {data.computedValue.toFixed(2)}
         </span>
       )}
 
