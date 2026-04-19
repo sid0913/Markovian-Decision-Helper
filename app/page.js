@@ -8,6 +8,7 @@ import NodeSidebar from './components/NodeSidebar'
 import EdgeSidebar from './components/EdgeSidebar'
 import ValidationBanner from './components/ValidationBanner'
 import ChatPanel from './components/ChatPanel'
+import SavesPanel from './components/SavesPanel'
 import { wouldCreateCycle } from '@/lib/mdp'
 import { applyOperations } from '@/lib/ai/applyOperations'
 import { autoLayout } from '@/lib/layout'
@@ -114,6 +115,11 @@ export default function Home() {
           </span>
         </div>
         <div className="flex items-center gap-1.5">
+          <SavesPanel
+            graph={{ nodes: graph.nodes, edges: graph.edges }}
+            onLoad={payload => { graph.loadGraph(payload); setFitViewTrigger(v => v + 1) }}
+          />
+
           {/* Examples dropdown */}
           <div className="relative">
             <button
