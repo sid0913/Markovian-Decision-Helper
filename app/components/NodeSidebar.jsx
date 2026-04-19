@@ -23,14 +23,17 @@ export default function NodeSidebar({ node, onChange, onDelete }) {
         className="w-full text-xs text-slate-900 bg-white border border-slate-200 rounded px-2 py-1.5 mb-3 focus:outline-none focus:ring-1 focus:ring-blue-400"
       />
 
-      <label className="block text-xs text-slate-500 mb-1">Reward</label>
+      <label className="block text-xs text-slate-500 mb-1">Reward <span className="text-slate-400">(-50 to 50)</span></label>
       <input
         type="number"
         placeholder="e.g. 10"
+        min="-50"
+        max="50"
         value={node.reward ?? ''}
         onChange={e => {
-          const v = e.target.value === '' ? null : parseFloat(e.target.value)
-          onChange({ reward: v })
+          if (e.target.value === '') { onChange({ reward: null }); return }
+          const v = Math.max(-50, Math.min(50, parseFloat(e.target.value)))
+          if (!isNaN(v)) onChange({ reward: v })
         }}
         className="w-full text-xs text-slate-900 bg-white border border-slate-200 rounded px-2 py-1.5 mb-3 focus:outline-none focus:ring-1 focus:ring-blue-400"
       />
