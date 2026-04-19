@@ -11,6 +11,7 @@ import ChatPanel from './components/ChatPanel'
 import { wouldCreateCycle } from '@/lib/mdp'
 import { applyOperations } from '@/lib/ai/applyOperations'
 import { autoLayout } from '@/lib/layout'
+import { EXAMPLES } from '@/lib/examples'
 
 export default function Home() {
   const graph = useMdpGraph()
@@ -18,6 +19,7 @@ export default function Home() {
   const [selectedEdgeId, setSelectedEdgeId] = useState(null)
   const [fitViewTrigger, setFitViewTrigger] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [examplesOpen, setExamplesOpen] = useState(false)
 
   const selectedNode = graph.nodes.find(n => n.id === selectedNodeId) ?? null
   const selectedEdge = graph.edges.find(e => e.id === selectedEdgeId) ?? null
@@ -66,6 +68,14 @@ export default function Home() {
     setFitViewTrigger(v => v + 1)
   }
 
+  function handleLoadExample(example) {
+    const laid = autoLayout(example.nodes, example.edges)
+    graph.loadGraph({ nodes: laid, edges: example.edges })
+    setFitViewTrigger(v => v + 1)
+    setTimeout(() => graph.compute(), 80)
+    setExamplesOpen(false)
+  }
+
   function handleChatOperations(ops) {
     const shouldCompute = ops.some(o => o.op === 'compute')
     const opsWithoutCompute = ops.filter(o => o.op !== 'compute')
@@ -104,6 +114,39 @@ export default function Home() {
           </span>
         </div>
         <div className="flex items-center gap-1.5">
+          {/* Examples dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setExamplesOpen(v => !v)}
+              className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-md text-slate-600 hover:bg-slate-50 transition-colors hidden sm:flex items-center gap-1"
+            >
+              Examples
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className={`transition-transform ${examplesOpen ? 'rotate-180' : ''}`}>
+                <path d="M2 3.5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {examplesOpen && (
+              <>
+                <div className="fixed inset-0 z-20" onClick={() => setExamplesOpen(false)} />
+                <div className="absolute right-0 top-full mt-1.5 w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-30 overflow-hidden">
+                  <div className="px-3 py-2 border-b border-slate-100">
+                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Load an example</p>
+                  </div>
+                  {EXAMPLES.map((ex, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleLoadExample(ex)}
+                      className="w-full text-left px-3 py-2.5 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0"
+                    >
+                      <p className="text-xs font-semibold text-slate-700">{ex.name}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">{ex.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
           <button
             onClick={handleAutoLayout}
             disabled={graph.nodes.length === 0}

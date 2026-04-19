@@ -3,6 +3,8 @@
 import { useReducer, useEffect, useRef } from 'react'
 import { validateGraph, computeValues, wouldCreateCycle } from '@/lib/mdp'
 import { saveGraph, loadGraph } from '@/lib/storage'
+import { autoLayout } from '@/lib/layout'
+import { EXAMPLES } from '@/lib/examples'
 
 let nodeCounter = 0
 let edgeCounter = 0
@@ -134,10 +136,17 @@ export function useMdpGraph() {
   const [state, dispatch] = useReducer(graphReducer, initialState)
   const saveTimer = useRef(null)
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount; show default example for first-time visitors
   useEffect(() => {
     const saved = loadGraph()
-    if (saved) dispatch({ type: 'LOAD', payload: saved })
+    if (saved) {
+      dispatch({ type: 'LOAD', payload: saved })
+    } else {
+      const ex = EXAMPLES[0]
+      const laid = autoLayout(ex.nodes, ex.edges)
+      dispatch({ type: 'LOAD', payload: { nodes: laid, edges: ex.edges } })
+      setTimeout(() => dispatch({ type: 'COMPUTE' }), 80)
+    }
   }, [])
 
   // Auto-save (debounced 500ms)
