@@ -15,9 +15,9 @@ export default function ActionNode({ data, selected }) {
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center w-32 h-16 rounded-lg ${bgClass} ${borderClass} cursor-pointer select-none shadow-sm`}
+      className={`relative flex flex-col items-center justify-center w-36 h-20 rounded-lg ${bgClass} ${borderClass} cursor-pointer select-none shadow-sm`}
     >
-      <Handle type="target" position={Position.Top} className="!w-2 !h-2 !bg-slate-400" />
+      <Handle type="target" position={Position.Top} className="w-2! h-2! bg-slate-400!" />
 
       <span className="text-xs font-semibold text-slate-700 text-center px-2 leading-tight">
         {data.label}
@@ -33,7 +33,7 @@ export default function ActionNode({ data, selected }) {
         </span>
       )}
 
-      <Handle type="source" position={Position.Bottom} className="!w-2 !h-2 !bg-slate-400" />
+      <Handle type="source" position={Position.Bottom} className="w-2! h-2! bg-slate-400!" />
     </div>
   )
 }

@@ -17,6 +17,7 @@ export default function Home() {
   const [selectedNodeId, setSelectedNodeId] = useState(null)
   const [selectedEdgeId, setSelectedEdgeId] = useState(null)
   const [fitViewTrigger, setFitViewTrigger] = useState(0)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const selectedNode = graph.nodes.find(n => n.id === selectedNodeId) ?? null
   const selectedEdge = graph.edges.find(e => e.id === selectedEdgeId) ?? null
@@ -72,7 +73,6 @@ export default function Home() {
       { nodes: graph.nodes, edges: graph.edges },
       opsWithoutCompute
     )
-    // Auto-prettify after AI builds/modifies the graph
     const prettified = { nodes: autoLayout(updated.nodes, updated.edges), edges: updated.edges }
     graph.loadGraph(prettified)
     setFitViewTrigger(v => v + 1)
@@ -84,31 +84,43 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen bg-slate-50">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-slate-200 shadow-sm z-10">
-        <div className="flex items-center gap-3">
+      <header className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-slate-200 shadow-sm z-10">
+        <div className="flex items-center gap-2">
+          {/* Mobile sidebar toggle */}
+          <button
+            onClick={() => setSidebarOpen(v => !v)}
+            className="md:hidden w-8 h-8 flex items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect y="2" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+              <rect y="7.25" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+              <rect y="12.5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+            </svg>
+          </button>
           <h1 className="text-sm font-bold text-slate-800">MDP Decision Tool</h1>
           <span className="text-xs text-slate-400 hidden sm:block">
             Model your decisions as Markov processes
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={handleAutoLayout}
             disabled={graph.nodes.length === 0}
             title="Reorganise graph into a clean, spaced layout"
-            className="text-xs px-3 py-1.5 border border-violet-300 bg-violet-50 hover:bg-violet-100 disabled:opacity-40 disabled:cursor-not-allowed text-violet-700 font-medium rounded-md transition-colors flex items-center gap-1.5"
+            className="text-xs px-2.5 py-1.5 border border-violet-300 bg-violet-50 hover:bg-violet-100 disabled:opacity-40 disabled:cursor-not-allowed text-violet-700 font-medium rounded-md transition-colors flex items-center gap-1"
           >
-            <span>✦</span> Prettify
+            <span>✦</span><span className="hidden sm:inline">Prettify</span>
           </button>
           <button
             onClick={graph.compute}
-            className="text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
+            className="text-xs px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
           >
             Compute
           </button>
           <button
             onClick={graph.reset}
-            className="text-xs px-3 py-1.5 border border-slate-200 rounded-md text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+            className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-md text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors hidden sm:block"
           >
             Reset
           </button>
@@ -116,11 +128,34 @@ export default function Home() {
       </header>
 
       {/* Main area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left sidebar */}
-        <aside className="w-56 bg-white border-r border-slate-200 flex flex-col overflow-y-auto shrink-0">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/20 z-30 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Left sidebar — always visible on md+, slide-in overlay on mobile */}
+        <aside className={`
+          ${sidebarOpen ? 'flex' : 'hidden'} md:flex
+          fixed md:relative inset-y-0 left-0 z-40 md:z-auto
+          w-64 md:w-56 bg-white border-r border-slate-200 flex-col overflow-y-auto shrink-0
+          shadow-xl md:shadow-none
+        `}>
+          {/* Mobile close button */}
+          <div className="md:hidden flex justify-end px-3 pt-3">
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="w-7 h-7 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors text-sm"
+            >
+              ✕
+            </button>
+          </div>
+
           <AddNodePanel
-            onAdd={graph.addNode}
+            onAdd={(type, label, pos) => { graph.addNode(type, label, pos); setSidebarOpen(false) }}
             nodeCount={graph.nodes.length}
           />
           {selectedNode && (

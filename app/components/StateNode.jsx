@@ -17,7 +17,7 @@ export default function StateNode({ data, selected }) {
     <div
       className={`relative flex flex-col items-center justify-center w-28 h-28 rounded-full shadow-md ${bgClass} ${ringClass} cursor-pointer select-none`}
     >
-      <Handle type="target" position={Position.Top} className="!w-2 !h-2 !bg-slate-400" />
+      <Handle type="target" position={Position.Top} className="w-2! h-2! bg-slate-400!" />
 
       <span className="text-xs font-semibold text-slate-700 text-center px-2 leading-tight max-w-full break-words">
         {data.label}
@@ -33,7 +33,7 @@ export default function StateNode({ data, selected }) {
         </span>
       )}
 
-      <Handle type="source" position={Position.Bottom} className="!w-2 !h-2 !bg-slate-400" />
+      <Handle type="source" position={Position.Bottom} className="w-2! h-2! bg-slate-400!" />
     </div>
   )
 }

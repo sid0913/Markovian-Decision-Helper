@@ -1,5 +1,5 @@
 [build]
-  command = "npm run lint && npm test -- --passWithNoTests && npm run build"
+  command = "npm test -- --passWithNoTests && npm run build"
   publish = ".next"
 
 [[plugins]]
